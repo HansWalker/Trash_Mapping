@@ -1,5 +1,8 @@
 import requests
 import os
+import cv2
+import numpy as np
+
 def search_trash(query):
     # Check if api key file exists
     if not os.path.exists('api_key.txt'):
@@ -119,3 +122,46 @@ def upload_video(file_path):
     response = requests.post(TASKS_URL, headers={"x-api-key": API_KEY}, data=data, files=file_param)
 
     return response.json()['_id']
+
+def count_bottles(video_file):
+
+    # Load pre-trained Haar cascades for different types of trash
+    bottle_cascade = cv2.CascadeClassifier('bottle_cascade.xml')
+    can_cascade = cv2.CascadeClassifier('can_cascade.xml')
+
+    # Initialize video capture
+    cap = cv2.VideoCapture('video.mp4')
+
+    # Initialize counters
+    bottle_count = 0
+    can_count = 0
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Detect bottles
+        bottles = bottle_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5)
+        for (x, y, w, h) in bottles:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        bottle_count += len(bottles)
+
+        # Detect cans
+        cans = can_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5)
+        for (x, y, w, h) in cans:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        can_count += len(cans)
+
+        # Display frame
+        cv2.imshow('Trash Detection', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Release resources
+    cap.release()
+    cv2.destroyAllWindows()
+
+    return bottle_count, can_count

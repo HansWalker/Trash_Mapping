@@ -46,19 +46,6 @@ def display_search_results():
     
     return render_template('search_results_in_video.html', result=result)
 
-@app.route('/search', methods=['POST'])
-def search():
-    search_query = request.form['search_box']
-    # Assuming vector_db_search returns the relative path to the video within the 'videos' folder
-    video_result = vector_db_search(search_query)
-    
-    if video_result:
-        video_path = os.path.join('videos', video_result)
-        video_base64 = vector_db_search(video_path)
-        return render_template('search_results_in_video.html', video_base64=video_base64, uploaded_video_id=uploaded_video_id)
-    else:
-        return render_template('search_results_in_video.html', video_base64=None, uploaded_video_id=uploaded_video_id)
-
 @app.route('/query', methods=['POST'])
 def query():
     search_query = request.form['query_box']
