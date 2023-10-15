@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Frontend</title>
+</head>
+<body>
+    <h1>Flask Frontend</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="video">Upload Video:</label>
+        <input type="file" name="video" id="video" accept="video/*">
+        <button type="submit">Upload</button>
+    </form>
+    <br>
+    <form action="/search" method="POST">
+        <label for="search_box">Search:</label>
+        <input type="text" name="search_box" id="search_box">
+        <button type="submit">Search</button>
+    </form>
+    <br>
+    <form action="/query" method="POST">
+        <label for="query_box">Search Database:</label>
+        <input type="text" name="query_box" id="query_box">
+        <button type="submit">Search</button>
+    </form>
+</body>
+</html>

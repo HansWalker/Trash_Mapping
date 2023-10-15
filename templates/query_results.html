@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Query Results</title>
+    <style>
+        /* Add table border styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Reduce the size of the images by half */
+        img {
+            max-width: 50%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Query Results</h1>
+    
+    <table>
+        <tr>
+            <th>Score</th>
+            <th>Thumbnail</th>
+        </tr>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.score }}</td>
+            <td><img src="{{ result.thumbnail_url }}" alt="Thumbnail"></td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
