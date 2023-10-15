@@ -19,8 +19,8 @@ data = {
 }
 
 response = requests.post(SEARCH_URL, headers={"x-api-key": API_KEY}, json=data)
-'''total_count = response.json()['search_pool']['total_count']
-results = []
+total_count = response.json()['search_pool']['total_count']
+'''results = []
 
 # Getting thumbnail and relevant data
 print(len(response.json()['data']))
