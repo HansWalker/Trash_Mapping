@@ -12,14 +12,22 @@ API_URL = "https://api.twelvelabs.io/v1.2"
 INDEX_ID = "652b15403c4a426cf3f4f61c"
 INDEXES_URL = f"{API_URL}/indexes"
 SEARCH_URL = f"{API_URL}/search"
+headers = {
+    "accept": "application/json",
+    "x-api-key": API_KEY,
+    "Content-Type": "application/json"}
+    
 data = {
-    "query": "plastic trash",
-    "index_id": INDEX_ID,
-    "search_options": ["visual"],
-}
+"query": "plastic",
+"threshold": "high",
+"search_options": ["conversation"],
+"filter": { "id": ["652b199c43e8c47e4eb48083"] },
+"index_id": INDEX_ID }
 
-response = requests.post(SEARCH_URL, headers={"x-api-key": API_KEY}, json=data)
-total_count = response.json()['search_pool']['total_count']
+
+response = requests.post(f"{API_URL}/search", headers=headers, json=data)
+
+print(response.json())
 '''results = []
 
 # Getting thumbnail and relevant data
@@ -35,3 +43,15 @@ print(results)
 #response2 = requests.get("/v1.1/indexes/index_id/videos/video_id/thumbnail", headers={"x-api-key": API_KEY})
 print (f"Status code: {response.status_code}")
 print (response.json())'''
+
+
+'''url = "https://api.twelvelabs.io/v1.1/indexes/652b15403c4a426cf3f4f61c/videos/652b199c43e8c47e4eb48083"
+
+headers = {
+    "accept": "application/json",
+    "x-api-key": "tlk_1C43Q5J273MHH1223XMER1AEJW3J",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)'''
+print(response.json()  )

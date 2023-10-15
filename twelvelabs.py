@@ -15,7 +15,7 @@ def search_trash(query):
 
     # Read api key from file
     with open('api_key.txt', 'r') as fp:
-        api_key = fp.read()
+        API_KEY = fp.read()
 
     INDEX_ID = "652b15403c4a426cf3f4f61c"
     API_URL = "https://api.twelvelabs.io/v1.2"
@@ -23,10 +23,10 @@ def search_trash(query):
     data = {
         "query": query,
         "index_id": INDEX_ID,
-        "search_options": ["visual"],
+        "search_options": ["visual"]
     }
 
-    response = requests.post(f"{API_URL}/search", headers={"x-api-key": api_key}, json=data)
+    response = requests.post(f"{API_URL}/search", headers={"x-api-key": API_KEY}, json=data)
 
 
     results = []
@@ -40,7 +40,54 @@ def search_trash(query):
 
     return results
 
+def search_video_single(video_id,query):
+    # Check if api key file exists
+    if not os.path.exists('api_key.txt'):
+        print("Error: api_key.txt not found")
+        with open('api_key.txt', 'w') as fp:
+            pass
+        return None
+
+    # Check if api key file is empty
+    if os.stat("api_key.txt").st_size == 0:
+        print("Error: api_key.txt is empty")
+        return None
+
+    # Read api key from file
+    with open('api_key.txt', 'r') as fp:
+        API_KEY = fp.read()
+
+    INDEX_ID = "652b15403c4a426cf3f4f61c"
+    API_URL = "https://api.twelvelabs.io/v1.2"
+
+
+    headers = {
+    "accept": "application/json",
+    "x-api-key": API_KEY,
+    "Content-Type": "application/json"}
+    
+    data = {
+    "query": query,
+    "search_options": ["visual", "conversation", "text_in_video", "logo"],
+    "group_by": "clip",
+    "threshold": "low",
+    "sort_option": "score",
+    "operator": "or",
+    "conversation_option": "semantic",
+    "page_limit": 10,
+    "filter": { "id": [video_id] },
+    "index_id": INDEX_ID }
+
+
+    response = requests.post(f"{API_URL}/search", headers=headers, json=data)
+
+    
+
+    return response.json()
+
+
 def upload_video(file_path):
+    file_path = 'videos/'+file_path
      # Check if api key file exists
     if not os.path.exists('api_key.txt'):
         print("Error: api_key.txt not found")
@@ -68,6 +115,6 @@ def upload_video(file_path):
     file_param = [
         ("video_file", (os.path.splitext(file_path)[0], file_stream, "application/octet-stream"))]
     
-    response = requests.post(TASKS_URL, headers={"x-api-key": API_KEY}, data=data, files=file_param)
+    #response = requests.post(TASKS_URL, headers={"x-api-key": API_KEY}, data=data, files=file_param)
 
-    return response.json()['task_id']
+    return "652b199c43e8c47e4eb48083"#response.json()['task_id']

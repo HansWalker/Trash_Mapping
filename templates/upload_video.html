@@ -1,3 +1,4 @@
+<!-- upload_video.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +16,7 @@
     <br>
 
     <!-- Search box for searching videos -->
-    <form action="/search_video" method="POST" id="searchForm">
+    <form action="/display_search_results" method="POST" id="searchForm">
         <label for="search_box">Search Video:</label>
         <input type="text" name="search_box" id="search_box">
         <button type="submit" id="search_button">Search</button>
@@ -23,32 +24,8 @@
 
     <!-- Display search results here -->
     <div id="search_results"></div>
-
-    <script>
-        // JavaScript code for handling the search functionality
-        document.addEventListener("DOMContentLoaded", function () {
-            const searchForm = document.getElementById("searchForm");
-            const searchButton = document.getElementById("search_button");
-            const searchResults = document.getElementById("search_results");
-
-            searchForm.addEventListener("submit", function (event) {
-                event.preventDefault(); // Prevent the form from submitting normally
-
-                const searchBox = document.getElementById("search_box");
-                const searchQuery = searchBox.value;
-
-                // Send an AJAX request to the server to call search_video_single function
-                fetch(`/search_video_single/${searchQuery}`)
-                    .then((response) => response.text())
-                    .then((data) => {
-                        // Display the search results in the search_results div
-                        searchResults.innerHTML = data;
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
-            });
-        });
-    </script>
-</body>
-</html>
+    <div id="search_results">
+        <a href="/" id="back_button">Back to Home</a>
+    </div>
+    </body>
+    </html>
