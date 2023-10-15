@@ -7,7 +7,20 @@
 <body>
     <h1>Search Results</h1>
     
-    <p>{{ result }}</p>
+    <table border="1">
+        <tr>
+            <th>Score</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </tr>
+        {% for item in result %}
+            <tr>
+                <td>{{ item.score }}</td>
+                <td>{{ item.start_time }}</td>
+                <td>{{ item.end_time }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 
     <br>
     <a href="/upload" id="back_button">Back to Search</a>

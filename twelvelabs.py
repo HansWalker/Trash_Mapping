@@ -69,21 +69,22 @@ def search_video_single(video_id,query):
     data = {
     "query": query,
     "search_options": ["visual", "conversation", "text_in_video", "logo"],
-    "group_by": "clip",
-    "threshold": "low",
-    "sort_option": "score",
-    "operator": "or",
-    "conversation_option": "semantic",
-    "page_limit": 10,
+    "threshold": "high",
     "filter": { "id": [video_id] },
     "index_id": INDEX_ID }
 
 
     response = requests.post(f"{API_URL}/search", headers=headers, json=data)
 
-    
+    results = []
 
-    return response.json()
+    for i in range(len(response.json()['data'])):
+        score = response.json()['data'][i]['score']
+        video_id = response.json()['data'][i]['video_id']
+        results.append({"score": score, 'start_time':response.json()['data'][i]['start'], 
+                        'end_time':response.json()['data'][i]['end']})
+    
+    return results
 
 
 def upload_video(file_path):
@@ -115,6 +116,6 @@ def upload_video(file_path):
     file_param = [
         ("video_file", (os.path.splitext(file_path)[0], file_stream, "application/octet-stream"))]
     
-    #response = requests.post(TASKS_URL, headers={"x-api-key": API_KEY}, data=data, files=file_param)
+    response = requests.post(TASKS_URL, headers={"x-api-key": API_KEY}, data=data, files=file_param)
 
-    return "652b199c43e8c47e4eb48083"#response.json()['task_id']
+    return response.json()['_id']
