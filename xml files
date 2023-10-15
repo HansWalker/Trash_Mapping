@@ -1,0 +1,3 @@
+# Load pre-trained Haar cascades for different types of trash
+bottle_cascade = cv2.CascadeClassifier('bottle_cascade.xml')
+can_cascade = cv2.CascadeClassifier('can_cascade.xml')
