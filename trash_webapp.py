@@ -48,13 +48,13 @@ def upload():
     file_name_global = uploaded_file.filename
 
     # Automatically segment the video after uploading
-    video_filename = f"segmentation.mp4"
-    save_path = os.path.join("videos", video_filename)
+    #video_filename = f"segmentation.mp4"
+    #save_path = os.path.join("videos", video_filename)
 
     # Call the segment_video function and specify the save path
     segment_video("videos/"+uploaded_file.filename, api_keys["Roboflow"])
     # Upload the segmented video
-    uploaded_video_id = upload_video(video_filename, api_keys["12 Labs"])
+    #uploaded_video_id = upload_video(video_filename, api_keys["12 Labs"])
 
     return render_template('upload_video.html', video_base64=video_base64, uploaded_video_id=uploaded_video_id)
 
@@ -67,7 +67,7 @@ def get_trash_data():
     print(trash_data, file=sys.stderr)
     return jsonify(trash_data)
 
-@app.route('/segment_video', methods=['POST'])
+'''@app.route('/segment_video', methods=['POST'])
 def segment_uploaded_video():
     global uploaded_video_id
     global video_base64
@@ -88,7 +88,7 @@ def segment_uploaded_video():
     uploaded_video_id = upload_video(video_filename, api_keys["12 Labs"])
 
 
-    return render_template('upload_video.html', video_base64=video_base64, uploaded_video_id=uploaded_video_id)  # Redirecting to upload page as an example
+    return render_template('upload_video.html', video_base64=video_base64, uploaded_video_id=uploaded_video_id)  # Redirecting to upload page as an example'''
 
 @app.route('/videos/<filename>')
 def serve_video(filename):
