@@ -37,7 +37,7 @@ def segment_video(file_name, API_KEY):
         i+=1
     average_trash = trash_amount/i
 
-    distance = ((i *3/(30*60)*5280/3)**(1/2))/(2*5280)
+    distance = i *3/(30*60)
 
     if(file_name=='videos/IMG_6505.MOV'):
         lat= 37.487126764972146
