@@ -1,20 +1,167 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Flask Frontend</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash Detection</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #2c3e50, #3498db);
+            background-attachment: fixed;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2% auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        label, input, button {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            border: none;
+            color: #fff;
+            background-color: #007BFF;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #map {
+            height: 400px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .lat-long-container, .action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .lat-long-container > div, .action-container > div {
+            width: 48%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 10px auto;
+        }
+
+        @media (max-width: 768px) {
+            .lat-long-container > div, .action-container > div {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Flask Frontend</h1>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <label for="video">Upload Video:</label>
-        <input type="file" name="video" id="video" accept="video/*">
-        <button type="submit">Upload</button>
-    </form>
-    <br>
-    <form action="/query" method="POST">
-        <label for="query_box">Search Database:</label>
-        <input type="text" name="query_box" id="query_box">
-        <button type="submit">Search</button>
-    </form>
+    <h1>Flask Frontend <i class="fas fa-globe"></i></h1>
+    <div class="container">
+        <div class="lat-long-container">
+            <div>
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude">
+            </div>
+            <div>
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude">
+            </div>
+        </div>
+        <button onclick="findTrashDensity()"><i class="fas fa-search"></i> Find Trash Density</button>
+        <div id="map"></div>
+        <div class="action-container">
+            <div>
+                <form action="/upload" method="post" enctype="multipart/form-data"> <!-- Added form tags -->
+                    <label for="video"><i class="fas fa-upload"></i> Upload Video:</label>
+                    <input type="file" name="video" accept="video/*">
+                    <button type="submit"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
+                </form> <!-- End of form tags -->
+            </div>
+            <div>
+                <label for="search_box"><i class="fas fa-database"></i> Search Database:</label>
+                <input type="text" name="search_box" id="search_box">
+                <button><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sigmoid(x) {
+            return 1 / (1 + Math.exp((-x)));
+        }
+
+        function findTrashDensity() {
+            var lat = parseFloat(document.getElementById("latitude").value);
+            var lng = parseFloat(document.getElementById("longitude").value);
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: new google.maps.LatLng(lat, lng)
+            });
+            document.getElementById('map').style.display = 'block';
+
+            // Fetch trash data from the backend
+            fetch('/get_trash_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `latitude=${lat}&longitude=${lng}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Iterate through the trash data and draw circles
+                data.forEach(item => {
+                    var circleCenter = new google.maps.LatLng(item[0], item[1]);
+                    var circleRadius = item[2] * 1609.34;  // Convert miles to meters
+                    var opacityValue = sigmoid(item[3]) * 0.6;
+                    var trashCircle = new google.maps.Circle({
+                        center: circleCenter,
+                        radius: circleRadius,
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: "#FF0000",
+                        fillOpacity: opacityValue,
+                        map: map
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching trash data:', error));
+        }
+    </script>
+
 </body>
+
 </html>

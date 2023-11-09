@@ -3,22 +3,61 @@
 <head>
     <title>Query Results</title>
     <style>
-        /* Add table border styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #2c3e50, #3498db); /* Reversed Gradient background */
+            background-attachment: fixed; /* Fixed background */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff; /* White text color */
+        }
+
         table {
+            margin: 20px auto;
+            background-color: #fff;
             border-collapse: collapse;
-            width: 100%;
+            width: 80%;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
         }
 
-        /* Reduce the size of the images by half */
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
         img {
-            max-width: 50%;
+            max-width: 100%;
             height: auto;
+        }
+
+        /* Back button styles */
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #fff; /* White text color */
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
