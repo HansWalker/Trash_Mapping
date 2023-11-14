@@ -87,7 +87,7 @@
 </head>
 
 <body>
-    <h1>Flask Frontend <i class="fas fa-globe"></i></h1>
+    <h1>Waste Landscapes<i class="fas fa-globe"></i></h1>
     <div class="container">
         <div class="lat-long-container">
             <div>
@@ -110,9 +110,11 @@
                 </form> <!-- End of form tags -->
             </div>
             <div>
-                <label for="search_box"><i class="fas fa-database"></i> Search Database:</label>
-                <input type="text" name="search_box" id="search_box">
-                <button><i class="fas fa-search"></i> Search</button>
+                <form action="/query" method="POST"> <!-- Update form action to /query -->
+                    <label for="search_box"><i class="fas fa-database"></i> Search Database:</label>
+                    <input type="text" name="query_box" id="search_box"> <!-- Ensure the name attribute is set to query_box -->
+                    <button type="submit"><i class="fas fa-search"></i> Search</button>
+                </form>
             </div>
         </div>
     </div>

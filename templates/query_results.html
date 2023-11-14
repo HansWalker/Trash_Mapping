@@ -4,36 +4,42 @@
     <title>Query Results</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #2c3e50, #3498db); /* Reversed Gradient background */
-            background-attachment: fixed; /* Fixed background */
+            background: linear-gradient(to bottom, #2c3e50, #3498db);
+            background-attachment: fixed;
         }
 
         h1 {
             text-align: center;
-            margin-top: 20px;
-            color: #fff; /* White text color */
+            margin-top: 30px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2% auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         table {
-            margin: 20px auto;
-            background-color: #fff;
+            width: 100%;
             border-collapse: collapse;
-            width: 80%;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
         }
 
         th, td {
             padding: 10px;
             text-align: center;
-            border: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
         }
 
         th {
-            background-color: #3498db;
+            background-color: #007BFF;
             color: #fff;
         }
 
@@ -42,42 +48,133 @@
         }
 
         img {
-            max-width: 100%;
+            max-width: 100px;
             height: auto;
+            border-radius: 5px;
         }
 
-        /* Back button styles */
-        a {
+        a.back-button {
             display: block;
-            text-align: center;
-            margin-top: 20px;
+            width: 200px; /* Specify the width of the button */
+            /* height: 50px; Optionally, you can specify the height too */
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 5px;
             text-decoration: none;
-            color: #fff; /* White text color */
             font-weight: bold;
+            transition: background-color 0.3s;
+            text-align: center; /* Center the text inside the button */
         }
 
-        a:hover {
-            text-decoration: underline;
+
+        a.back-button:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                margin: 2% auto;
+            }
+        }
+        .filter-button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            background-color: #ddd;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-button.active {
+            background-color: #007BFF;
+            color: white;
+        }
+        .filter-results-title {
+            text-align: center;
+            color: #000000;
+            margin: 20px 0;
+        }
+
+        /* Updated styles for .back-button for centering */
+        a.back-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>Query Results</h1>
-    
-    <table>
-        <tr>
-            <th>Score</th>
-            <th>Thumbnail</th>
-        </tr>
-        {% for result in results %}
-        <tr>
-            <td>{{ result.score }}</td>
-            <td><img src="{{ result.thumbnail_url }}" alt="Thumbnail"></td>
-        </tr>
-        {% endfor %}
-    </table>
-    
-    <br>
-    <a href="/">Back to Home</a>
+    <div class="container">
+        <h2 class="filter-results-title">Filter Results</h2>
+        <div style="text-align: center;">
+            <button class="filter-button active" onclick="filterResults('None')">None</button>
+            <button class="filter-button" onclick="filterResults('Urban')">Urban</button>
+            <button class="filter-button" onclick="filterResults('Suburban')">Suburban</button>
+            <button class="filter-button" onclick="filterResults('Rural')">Rural</button>
+        </div>
+        <table id="resultsTable">
+            <tr>
+                <th>Score</th>
+                <th>Video Location</th>
+                <th>Thumbnail</th>
+            </tr>
+            {% for result in results %}
+            <tr class="result-row" data-location="{{ result.video_location }}">
+                <td>{{ result.score }}</td>
+                <td>{{ result.video_location }}</td>
+                <td><img src="{{ result.thumbnail_url }}" alt="Thumbnail"></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div style="text-align: center;"> <!-- Centering div wrapper -->
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+
+    <script>
+        function filterResults(location) {
+            // First, remove the 'active' class from all buttons
+            document.querySelectorAll('.filter-button').forEach(function(button) {
+                button.classList.remove('active');
+            });
+
+            // Add the 'active' class to the clicked button
+            document.querySelectorAll('.filter-button').forEach(function(button) {
+                if(button.textContent === location) {
+                    button.classList.add('active');
+                }
+            });
+
+            // Show all rows if 'None' is selected
+            if (location === 'None') {
+                document.querySelectorAll('.result-row').forEach(function(row) {
+                    row.style.display = '';
+                });
+            } else {
+                // Otherwise, filter the rows based on the location
+                document.querySelectorAll('.result-row').forEach(function(row) {
+                    if (row.getAttribute('data-location') === location) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 </html>

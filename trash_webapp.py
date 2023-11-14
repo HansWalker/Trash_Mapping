@@ -1,14 +1,14 @@
 # trash_webapp.py
 
 from flask import Flask, request, render_template,  send_file, jsonify
-from functions.twelvelabs import search_trash, upload_video, search_video_single
+from functions.twelvelabs import search_trash, upload_video, search_video_single, classify_latest_video
 from functions.segment_video import segment_video
 import os
 import base64
 import sys
 import json
 from Utils import get_trash_locations
-
+import threading
 app = Flask(__name__)
 
 # Store the uploaded video's video_id
@@ -44,6 +44,11 @@ def upload():
 
     # Upload the video and get the video_id
     uploaded_video_id = upload_video(uploaded_file.filename, api_keys["12 Labs"])
+
+    print("Video Id",uploaded_file.filename,"\n\n", file=sys.stderr)
+
+    classification_thread = threading.Thread(target=classify_latest_video, args=(uploaded_video_id, uploaded_file.filename, api_keys["12 Labs"]))
+    classification_thread.start()
     
     file_name_global = uploaded_file.filename
 
@@ -67,29 +72,6 @@ def get_trash_data():
     print(trash_data, file=sys.stderr)
     return jsonify(trash_data)
 
-'''@app.route('/segment_video', methods=['POST'])
-def segment_uploaded_video():
-    global uploaded_video_id
-    global video_base64
-    if not uploaded_video_id:
-        return "No video uploaded"
-
-    # Define a unique save path in /videos directory using uuid
-    video_filename = f"segmentation.mp4"
-    save_path = os.path.join("videos", video_filename)
-
-    # Call the segment_video function and specify the save path
-    segment_video(video_base64, save_path)  # Assuming segment_video now saves to the provided path
-
-    # Load API keys
-    api_keys = json.load(open('api_keys.json'))
-
-    # Upload the segmented video
-    uploaded_video_id = upload_video(video_filename, api_keys["12 Labs"])
-
-
-    return render_template('upload_video.html', video_base64=video_base64, uploaded_video_id=uploaded_video_id)  # Redirecting to upload page as an example'''
-
 @app.route('/videos/<filename>')
 def serve_video(filename):
     video_path = os.path.join(os.getcwd(), 'videos', filename)
@@ -112,13 +94,11 @@ def display_search_results():
 
 @app.route('/query', methods=['POST'])
 def query():
-    search_query = request.form['query_box']
-    # Load API keys
+    search_query = request.form['query_box']  # Use the correct form data key 'query_box'
     api_keys = json.load(open('api_keys.json'))
-
     results = search_trash(search_query, api_keys["12 Labs"])
     return render_template('query_results.html', results=results)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=4000)
